@@ -5,7 +5,6 @@ __author__ = 'micha'
 # ============================================
 from pykeyboard import PyKeyboard
 from time import sleep
-import clipboard
 
 
 # ============================================
@@ -47,6 +46,10 @@ class Keys:
     def press_right(self, num=1):
         for i in range(num):
             self.k.tap_key(self.k.right_key)
+
+    def press_left(self, num=1):
+        for i in range(num):
+            self.k.tap_key(self.k.left_key)
 
     def press_up(self, num=1):
         for i in range(num):
@@ -96,7 +99,6 @@ class Keys:
             self.press_tab()
             self.k.release_key(self.k.alt_key)
 
-
     def press_ctrl_alt_and(self, f, num=1):
         for i in range(num):
             self.k.press_key(self.k.control_key)
@@ -114,6 +116,9 @@ class Keys:
     def press_ctrl_alt_right(self, num=1):
         self.press_ctrl_alt_and(self.press_right, num)
 
+    def press_ctrl_alt_left(self, num=1):
+        self.press_ctrl_alt_and(self.press_left, num)
+
     def press_ctrl_and(self, letter, num=1):
         assert type(letter) is str, 'The letter has to be a string'
         for i in range(num):
@@ -126,7 +131,6 @@ class Keys:
 
     def type(self, txt):
         self.k.type_string(txt)
-
 
     @staticmethod
     def suppress_xlib_output(num):

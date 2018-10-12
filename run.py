@@ -7,7 +7,7 @@ from ConfigParser import ConfigParser
 from json import loads
 from commands import getstatusoutput
 from subprocess import call
-from os.path import expanduser, basename
+from os.path import expanduser
 from datetime import datetime
 import clipboard
 
@@ -56,8 +56,11 @@ class Run(Mouse, Keys):
     def drs_trigger_stop(self):
         self.click(*loads(self.Config.get('DRS', 'trigger')))
 
+    def drs_trigger_start(self):
+        self.click(*loads(self.Config.get('DRS', 'trigger')))
+
     def drs_finish_run(self):
-        self.click(*loads(self.Config.get('DRS', 'close')))
+        self.click(*loads(self.Config.get('DRS', 'close/save')))
 
     def stop_drs(self):
         self.drs_trigger_stop()
@@ -66,7 +69,7 @@ class Run(Mouse, Keys):
         sleep(.5)
 
     def drs_save(self):
-        self.click(*loads(self.Config.get('DRS', 'save')))
+        self.click(*loads(self.Config.get('DRS', 'close/save')))
         sleep(.5)
         self.press_tab()
         sleep(.2)
@@ -96,9 +99,6 @@ class Run(Mouse, Keys):
         self.type('1000000')
         sleep(.1)
         self.press_enter()
-
-    def drs_trigger_start(self):
-        self.click(*loads(self.Config.get('DRS', 'trigger')))
 
     def start_drs(self):
         self.drs_save()
@@ -144,9 +144,23 @@ class Run(Mouse, Keys):
         self.start_dut('fei4 3D')
         self.start_dut('fei4 proto')
 
-    def start_stop(self):
+    def goto_bottom_left_desktop(self):
         self.press_ctrl_alt_down()
         sleep(.1)
+        self.press_ctrl_alt_left()
+        sleep(.1)
+
+    def goto_bottom_right_desktop(self):
+        self.press_ctrl_alt_down()
+        sleep(.1)
+        self.press_ctrl_alt_right()
+        sleep(.1)
+
+    def start_stop(self):
+        self.goto_bottom_left_desktop()
+        sleep(1)
+        self.stop_drs()
+        sleep(1)
         self.press_ctrl_alt_right()
         sleep(1)
         self.stop_telescope()
@@ -160,6 +174,8 @@ class Run(Mouse, Keys):
         self.press_ctrl_alt_down()
         sleep(1)
         self.start_telescope()
+        sleep(1)
+        self.start_drs()
 
     def run(self):
         i = 0
@@ -183,4 +199,4 @@ class Run(Mouse, Keys):
 
 if __name__ == '__main__':
     z = Run()
-    #z.run()
+    z.run()
