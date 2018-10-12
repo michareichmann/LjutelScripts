@@ -62,14 +62,6 @@ class Run(Mouse, Keys):
     def drs_finish_run(self):
         self.click(*loads(self.Config.get('DRS', 'close/save')))
 
-    def stop_drs(self):
-        self.drs_trigger_stop()
-        sleep(.5)
-        self.drs_finish_run()
-        sleep(.1)
-        self.click(30, 863)
-        sleep(.5)
-
     def drs_save(self):
         self.click(*loads(self.Config.get('DRS', 'close/save')))
         sleep(.5)
@@ -107,8 +99,18 @@ class Run(Mouse, Keys):
         sleep(.5)
         self.drs_trigger_start()
         sleep(.1)
-        self.click(30, 863)
+        self.goto_neutral()
 
+    def stop_drs(self):
+        self.drs_trigger_stop()
+        sleep(.5)
+        self.drs_finish_run()
+        sleep(.1)
+        self.goto_neutral()
+        sleep(.5)
+
+    def goto_neutral(self):
+        self.click(*loads(self.Config.get('TERMINALS', 'neutral')))
 
     def stop_telescope(self):
         self.switch_ext_trigger()
@@ -116,14 +118,14 @@ class Run(Mouse, Keys):
         self.switch_write_tel()
         self.reset_counters()
         sleep(.2)
-        self.click(33, 791)
+        self.goto_neutral()
 
     def start_telescope(self):
         self.switch_write_tel()
         sleep(1)
         self.switch_ext_trigger()
         sleep(.2)
-        self.click(33, 791)
+        self.goto_neutral()
 
     def stop_dut(self, name):
         self.click(*loads(self.Config.get('TERMINALS', name)))
@@ -179,6 +181,8 @@ class Run(Mouse, Keys):
         self.press_ctrl_alt_down()
         sleep(1)
         self.start_telescope()
+        sleep(1)
+        self.press_ctrl_alt_left()
         sleep(1)
         self.start_drs()
 
