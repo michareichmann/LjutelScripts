@@ -66,6 +66,8 @@ class Run(Mouse, Keys):
         self.drs_trigger_stop()
         sleep(.5)
         self.drs_finish_run()
+        sleep(.1)
+        self.click(30, 863)
         sleep(.5)
 
     def drs_save(self):
@@ -104,6 +106,9 @@ class Run(Mouse, Keys):
         self.drs_save()
         sleep(.5)
         self.drs_trigger_start()
+        sleep(.1)
+        self.click(30, 863)
+
 
     def stop_telescope(self):
         self.switch_ext_trigger()
@@ -181,7 +186,7 @@ class Run(Mouse, Keys):
         i = 0
         while True:
             if self.check_file() or i > 2 * 60 * 60:
-                call([expanduser('~/Downloads/run/say.py')])
+                call([expanduser('~/Downloads/LjutelScripts/say.py')])
                 self.start_stop()
                 i = 0
             sleep(5)
@@ -191,7 +196,8 @@ class Run(Mouse, Keys):
     @staticmethod
     def check_file():
         try:
-            return int(getstatusoutput('ssh data /home/testbeam/Downloads/get_n_events.py')[-1]) > 7817636  # ~ 200k events in FEI4 anchor module
+            #return int(getstatusoutput('ssh data /home/testbeam/Downloads/get_n_events.py')[-1]) > 7817636  # ~ 200k events in FEI4 anchor module
+            return int(getstatusoutput('ssh data /home/testbeam/Downloads/get_n_events.py')[-1]) > 381763  # ~ 200k events in FEI4 anchor module
         except Exception as err:
             print err
             return False
