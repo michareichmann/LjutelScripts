@@ -76,13 +76,17 @@ class Run(Mouse, Keys):
         sleep(.2)
         self.press_shift_tab(3)
         sleep(.2)
+        self.press_end_key()
+        sleep(.2)
+        self.press_home_key()
+        sleep(.2)
+        self.press_tab(2)
+        sleep(.2)
         self.press_ctrl_and('c')
         sleep(.2)
-        last_run_nr = clipboard.paste()
-        run_nr = int(basename(last_run_nr).strip('run.dat')) + 1
+        run_nr = int(clipboard.paste().strip('run.dat')) + 1
         run_nr = 'run{}.dat'.format(run_nr)
         sleep(.1)
-        self.press_tab(2)
         self.type(run_nr)
         sleep(.1)
         self.press_enter()
@@ -90,6 +94,8 @@ class Run(Mouse, Keys):
         self.press_ctrl_and('a')
         sleep(.1)
         self.type('1000000')
+        sleep(.1)
+        self.press_enter()
 
     def drs_trigger_start(self):
         self.click(*loads(self.Config.get('DRS', 'trigger')))
@@ -177,4 +183,4 @@ class Run(Mouse, Keys):
 
 if __name__ == '__main__':
     z = Run()
-    z.run()
+    #z.run()

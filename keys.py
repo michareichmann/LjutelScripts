@@ -21,6 +21,14 @@ class Keys:
         for i in range(num):
             self.k.tap_key(self.k.tab_key)
 
+    def press_home_key(self, num=1):
+        for i in range(num):
+            self.k.tap_key(self.k.home_key)
+
+    def press_end_key(self, num=1):
+        for i in range(num):
+            self.k.tap_key(self.k.end_key)
+ 
     def press_enter(self):
         self.k.tap_key(self.k.enter_key)
 
