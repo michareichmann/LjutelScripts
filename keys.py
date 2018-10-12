@@ -5,6 +5,7 @@ __author__ = 'micha'
 # ============================================
 from pykeyboard import PyKeyboard
 from time import sleep
+import clipboard
 
 
 # ============================================
@@ -114,6 +115,9 @@ class Keys:
 
     def press_space(self):
         self.k.tap_key(' ')
+
+    def type(self, txt):
+        self.k.type_string(txt)
 
 
     @staticmethod

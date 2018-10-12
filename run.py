@@ -7,9 +7,9 @@ from ConfigParser import ConfigParser
 from json import loads
 from commands import getstatusoutput
 from subprocess import call
-from os.path import expanduser
+from os.path import expanduser, basename
 from datetime import datetime
-
+import clipboard
 
 GREEN = '\033[92m'
 ENDC = '\033[0m'
@@ -52,6 +52,52 @@ class Run(Mouse, Keys):
             sleep(.2)
             self.release(*loads(self.Config.get('KARTEL', 'reset counters')))
             sleep(.1)
+
+    def drs_trigger_stop(self):
+        self.click(*loads(self.Config.get('DRS', 'trigger')))
+
+    def drs_finish_run(self):
+        self.click(*loads(self.Config.get('DRS', 'close')))
+
+    def stop_drs(self):
+        self.drs_trigger_stop()
+        sleep(.5)
+        self.drs_finish_run()
+        sleep(.5)
+
+    def drs_save(self):
+        self.click(*loads(self.Config.get('DRS', 'save')))
+        sleep(.5)
+        self.press_tab()
+        sleep(.2)
+        self.press_down(2)
+        sleep(.2)
+        self.press_enter()
+        sleep(.2)
+        self.press_shift_tab(3)
+        sleep(.2)
+        self.press_ctrl_and('c')
+        sleep(.2)
+        last_run_nr = clipboard.paste()
+        run_nr = int(basename(last_run_nr).strip('run.dat')) + 1
+        run_nr = 'run{}.dat'.format(run_nr)
+        sleep(.1)
+        self.press_tab(2)
+        self.type(run_nr)
+        sleep(.1)
+        self.press_enter()
+        sleep(.5)
+        self.press_ctrl_and('a')
+        sleep(.1)
+        self.type('1000000')
+
+    def drs_trigger_start(self):
+        self.click(*loads(self.Config.get('DRS', 'trigger')))
+
+    def start_drs(self):
+        self.drs_save()
+        sleep(.5)
+        self.drs_trigger_start()
 
     def stop_telescope(self):
         self.switch_ext_trigger()
