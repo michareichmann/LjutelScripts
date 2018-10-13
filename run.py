@@ -33,38 +33,37 @@ class Run(Mouse, Keys):
     def __init__(self, config_file='config.ini'):
         Keys.__init__(self)
         Mouse.__init__(self)
-        self.Config = self.load_config(config_file)
+        self.ConfigFileName = config_file
 
-    @staticmethod
-    def load_config(filename):
+    def get_from_config(self, section, option):
         p = ConfigParser()
-        p.read(filename)
-        return p
+        p.read(self.ConfigFileName)
+        return p.get(section, option)
 
     def switch_ext_trigger(self):
-        self.click(*loads(self.Config.get('KARTEL', 'external trigger')))
+        self.click(*loads(self.get_from_config('KARTEL', 'external trigger')))
 
     def switch_write_tel(self):
-        self.click(*loads(self.Config.get('KARTEL', 'write file')))
+        self.click(*loads(self.get_from_config('KARTEL', 'write file')))
 
     def reset_counters(self):
         for i in xrange(3):
-            self.press(*loads(self.Config.get('KARTEL', 'reset counters')))
+            self.press(*loads(self.get_from_config('KARTEL', 'reset counters')))
             sleep(.2)
-            self.release(*loads(self.Config.get('KARTEL', 'reset counters')))
+            self.release(*loads(self.get_from_config('KARTEL', 'reset counters')))
             sleep(.1)
 
     def drs_trigger_stop(self):
-        self.click(*loads(self.Config.get('DRS', 'trigger')))
+        self.click(*loads(self.get_from_config('DRS', 'trigger')))
 
     def drs_trigger_start(self):
-        self.click(*loads(self.Config.get('DRS', 'trigger')))
+        self.click(*loads(self.get_from_config('DRS', 'trigger')))
 
     def drs_finish_run(self):
-        self.click(*loads(self.Config.get('DRS', 'close/save')))
+        self.click(*loads(self.get_from_config('DRS', 'close/save')))
 
     def drs_save(self):
-        self.click(*loads(self.Config.get('DRS', 'close/save')))
+        self.click(*loads(self.get_from_config('DRS', 'close/save')))
         sleep(.5)
         self.press_tab()
         sleep(.2)
@@ -111,7 +110,7 @@ class Run(Mouse, Keys):
         sleep(.5)
 
     def goto_neutral(self):
-        self.click(*loads(self.Config.get('TERMINALS', 'neutral')))
+        self.click(*loads(self.get_from_config('TERMINALS', 'neutral')))
 
     def stop_telescope(self):
         self.switch_ext_trigger()
@@ -129,7 +128,7 @@ class Run(Mouse, Keys):
         self.goto_neutral()
 
     def stop_dut(self, name):
-        self.click(*loads(self.Config.get('TERMINALS', name)))
+        self.click(*loads(self.get_from_config('TERMINALS', name)))
         sleep(.5)
         self.press_ctrl_and('c')
         sleep(.1)
@@ -140,7 +139,7 @@ class Run(Mouse, Keys):
         self.stop_dut('cms')
 
     def start_dut(self, name):
-        self.click(*loads(self.Config.get('TERMINALS', name)))
+        self.click(*loads(self.get_from_config('TERMINALS', name)))
         sleep(.5)
         self.press_up()
         sleep(.2)
@@ -198,10 +197,10 @@ class Run(Mouse, Keys):
             i += 5
             info('already waiting for {} '.format(datetime.fromtimestamp(i).strftime('%M:%S')), overlay=True)
 
-    @staticmethod
-    def check_file():
+    def check_file(self):
         try:
-            return int(getstatusoutput('ssh data /home/testbeam/Downloads/get_n_events.py')[-1]) > 8783860  # ~ 200k events in FEI4 anchor module
+            size_limit = self.get_from_config('KARTEL', 'file size')
+            return int(getstatusoutput('ssh data /home/testbeam/Downloads/get_n_events.py')[-1]) > size_limit  # ~ 200k events in FEI4 anchor module
         except Exception as err:
             print err
             return False
