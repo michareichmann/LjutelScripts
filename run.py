@@ -11,6 +11,7 @@ from os.path import expanduser
 from datetime import datetime
 import clipboard
 from argparse import ArgumentParser
+from re import split
 
 GREEN = '\033[92m'
 ENDC = '\033[0m'
@@ -62,7 +63,7 @@ class Run(Mouse, Keys):
     def drs_finish_run(self):
         self.click(*loads(self.get_from_config('DRS', 'close/save')))
 
-    def drs_save(self):
+    def drs_save_old(self):
         self.click(*loads(self.get_from_config('DRS', 'close/save')))
         sleep(.5)
         self.press_tab()
@@ -92,6 +93,14 @@ class Run(Mouse, Keys):
         sleep(.1)
         self.type('1000000')
         sleep(.1)
+        self.press_enter()
+
+    def drs_save(self):
+        self.click(*loads(self.get_from_config('DRS', 'close/save')))
+        sleep(.5)
+        old_run_nr = get_last_drs_run_number()
+        self.type('run{}.dat'.format(old_run_nr + 1))
+        sleep(.2)
         self.press_enter()
 
     def start_drs(self):
@@ -163,11 +172,12 @@ class Run(Mouse, Keys):
         self.press_ctrl_alt_right()
         sleep(.1)
 
-    def start_stop(self):
-        # self.goto_bottom_left_desktop()
-        # sleep(1)
-        # self.stop_drs()
-        # sleep(1)
+    def start_stop(self, with_drs=False):
+        if with_drs:
+            self.goto_bottom_left_desktop()
+            sleep(1)
+            self.stop_drs()
+            sleep(1)
         self.goto_bottom_right_desktop()
         sleep(1)
         self.stop_telescope()
@@ -182,9 +192,10 @@ class Run(Mouse, Keys):
         sleep(1)
         self.start_telescope()
         sleep(1)
-        # self.press_ctrl_alt_left()
-        # sleep(1)
-        # self.start_drs()
+        if with_drs:
+            self.press_ctrl_alt_left()
+            sleep(1)
+            self.start_drs()
 
     def run(self):
         i = 0
@@ -206,10 +217,17 @@ class Run(Mouse, Keys):
             return False
 
 
+def get_last_drs_run_number():
+    status = getstatusoutput('ssh -tY data ls /media/testbeam/testbeam-oct-2018/drs/')[-1]
+    run = max(split('[ \t]', status.split('\n')[0].strip('\r')))
+    return int(run.strip('run.dat'))
+
+
 if __name__ == '__main__':
 
     parser = ArgumentParser()
     parser.add_argument('--test', '-t', action='store_true')
+    parser.add_argument('-drs', action='store_true')
     args = parser.parse_args()
 
     z = Run()
