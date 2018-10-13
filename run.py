@@ -164,11 +164,11 @@ class Run(Mouse, Keys):
         sleep(.1)
 
     def start_stop(self):
-        self.goto_bottom_left_desktop()
-        sleep(1)
-        self.stop_drs()
-        sleep(1)
-        self.press_ctrl_alt_right()
+        # self.goto_bottom_left_desktop()
+        # sleep(1)
+        # self.stop_drs()
+        # sleep(1)
+        self.goto_bottom_right_desktop()
         sleep(1)
         self.stop_telescope()
         sleep(.5)
@@ -182,9 +182,9 @@ class Run(Mouse, Keys):
         sleep(1)
         self.start_telescope()
         sleep(1)
-        self.press_ctrl_alt_left()
-        sleep(1)
-        self.start_drs()
+        # self.press_ctrl_alt_left()
+        # sleep(1)
+        # self.start_drs()
 
     def run(self):
         i = 0
