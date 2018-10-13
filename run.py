@@ -10,6 +10,7 @@ from subprocess import call
 from os.path import expanduser
 from datetime import datetime
 import clipboard
+from argparse import ArgumentParser
 
 GREEN = '\033[92m'
 ENDC = '\033[0m'
@@ -207,5 +208,11 @@ class Run(Mouse, Keys):
 
 
 if __name__ == '__main__':
+
+    parser = ArgumentParser()
+    parser.add_argument('--test', '-t', action='store_true')
+    args = parser.parse_args()
+
     z = Run()
-    z.run()
+    if not args.test:
+        z.run()
