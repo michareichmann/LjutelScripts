@@ -210,7 +210,7 @@ class Run(Mouse, Keys):
 
     def check_file(self):
         try:
-            size_limit = self.get_from_config('KARTEL', 'file size')
+            size_limit = int(self.get_from_config('KARTEL', 'file size'))
             return int(getstatusoutput('ssh data /home/testbeam/Downloads/get_n_events.py')[-1]) > size_limit  # ~ 200k events in FEI4 anchor module
         except Exception as err:
             print err
