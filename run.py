@@ -200,8 +200,7 @@ class Run(Mouse, Keys):
     @staticmethod
     def check_file():
         try:
-            #return int(getstatusoutput('ssh data /home/testbeam/Downloads/get_n_events.py')[-1]) > 7817636  # ~ 200k events in FEI4 anchor module
-            return int(getstatusoutput('ssh data /home/testbeam/Downloads/get_n_events.py')[-1]) > 381763  # ~ 200k events in FEI4 anchor module
+            return int(getstatusoutput('ssh data /home/testbeam/Downloads/get_n_events.py')[-1]) > 8783860  # ~ 200k events in FEI4 anchor module
         except Exception as err:
             print err
             return False
