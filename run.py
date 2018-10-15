@@ -7,7 +7,7 @@ from ConfigParser import ConfigParser
 from json import loads
 from commands import getstatusoutput
 from subprocess import call
-from os.path import expanduser
+from os.path import expanduser, join
 from datetime import datetime
 import clipboard
 from argparse import ArgumentParser
@@ -98,9 +98,8 @@ class Run(Mouse, Keys):
     def drs_save(self):
         self.click(*loads(self.get_from_config('DRS', 'close/save')))
         sleep(.5)
-        old_run_nr = get_last_drs_run_number()
-#        self.type('run{}.dat'.format(old_run_nr + 1))
-        self.type('/media/testbeam/testbeam-oct-2018/drs/run{}.dat'.format(old_run_nr + 1))
+        old_run_nr = self.get_last_drs_run_number()
+        self.type(join(self.get_from_config('DRS', 'save directory'), 'run{}.dat'.format(old_run_nr + 1)))
         sleep(.2)
         self.press_enter()
         sleep(.5)
@@ -109,7 +108,6 @@ class Run(Mouse, Keys):
         self.type('1000000')
         sleep(.1)
         self.press_enter()
-
 
     def start_drs(self):
         self.drs_save()
@@ -224,11 +222,10 @@ class Run(Mouse, Keys):
             print err
             return False
 
-
-def get_last_drs_run_number():
-    status = getstatusoutput('ssh -tY data ls /media/testbeam/testbeam-oct-2018/drs/')[-1]
-    run = max(split('[ \t]', status.split('\n')[0].strip('\r')))
-    return int(run.strip('run.dat'))
+    def get_last_drs_run_number(self):
+        status = getstatusoutput('ssh -tY data ls {}'.format(self.get_from_config('DRS', 'save directory')))[-1]
+        run = max(split('[ \t]', status.split('\n')[0].strip('\r')))
+        return int(run.strip('run.dat'))
 
 
 if __name__ == '__main__':
