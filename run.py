@@ -99,9 +99,17 @@ class Run(Mouse, Keys):
         self.click(*loads(self.get_from_config('DRS', 'close/save')))
         sleep(.5)
         old_run_nr = get_last_drs_run_number()
-        self.type('run{}.dat'.format(old_run_nr + 1))
+#        self.type('run{}.dat'.format(old_run_nr + 1))
+        self.type('/media/testbeam/testbeam-oct-2018/drs/run{}.dat'.format(old_run_nr + 1))
         sleep(.2)
         self.press_enter()
+        sleep(.5)
+        self.press_ctrl_and('a')
+        sleep(.1)
+        self.type('1000000')
+        sleep(.1)
+        self.press_enter()
+
 
     def start_drs(self):
         self.drs_save()
@@ -197,12 +205,12 @@ class Run(Mouse, Keys):
             sleep(1)
             self.start_drs()
 
-    def run(self):
+    def run(self, with_drs):
         i = 0
         while True:
             if self.check_file() or i > 2 * 60 * 60:
                 call([expanduser('~/Downloads/LjutelScripts/say.py')])
-                self.start_stop()
+                self.start_stop(with_drs)
                 i = 0
             sleep(5)
             i += 5
@@ -232,4 +240,4 @@ if __name__ == '__main__':
 
     z = Run()
     if not args.test:
-        z.run()
+        z.run(args.drs)
