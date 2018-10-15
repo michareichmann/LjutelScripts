@@ -41,6 +41,10 @@ class Run(Mouse, Keys):
         p.read(self.ConfigFileName)
         return p.get(section, option)
 
+    def idle_mouse(self):
+        x, y = self.get_mouse_position()
+        self.move_to(x + (1 if x < 500 else -1), y)
+
     def switch_ext_trigger(self):
         self.click(*loads(self.get_from_config('KARTEL', 'external trigger')))
 
@@ -204,14 +208,19 @@ class Run(Mouse, Keys):
             self.start_drs()
 
     def run(self, with_drs):
-        i = 0
+        i, j = 0, 0
+        t_wait = 5
         while True:
             if self.check_file() or i > 2 * 60 * 60:
                 call([expanduser('~/Downloads/LjutelScripts/say.py')])
                 self.start_stop(with_drs)
                 i = 0
-            sleep(5)
-            i += 5
+            if j > 60 * 5:
+                self.idle_mouse()
+                j = 0
+            sleep(t_wait)
+            i += t_wait
+            j += t_wait
             info('already waiting for {} '.format(datetime.fromtimestamp(i).strftime('%M:%S')), overlay=True)
 
     def check_file(self):

@@ -27,6 +27,9 @@ class Mouse:
     def click(self, x, y, button=1):
         self.m.click(x, y, button)
 
+    def move_to(self, x, y):
+        self.m.move(x, y)
+
     @staticmethod
     def suppress_xlib_output(num):
         for i in range(num):
