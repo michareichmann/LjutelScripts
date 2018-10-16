@@ -16,10 +16,12 @@ p.add_argument('start', nargs='?', default=0, type=int)
 p.add_argument('-l', nargs='?', default='/home/testbeam/dev/pxar/data/Tel4/data')
 args = p.parse_args()
 
-scope = ['https://spreadsheets.google.com/feeds']
-creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
-client = gspread.authorize(creds)
-sheet = client.open_by_key('1t-MXNW0eN9tkGZSakfPdmnd_wcq4cX14Nw0bQ2ma_OQ').sheet1
+
+def load_sheet():
+    scope = ['https://spreadsheets.google.com/feeds']
+    creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
+    client = gspread.authorize(creds)
+    return client.open_by_key('1t-MXNW0eN9tkGZSakfPdmnd_wcq4cX14Nw0bQ2ma_OQ').sheet1
 
 
 def get_file_names():
@@ -37,15 +39,15 @@ def get_file_info(files, nr):
 col2num = lambda col: reduce(lambda x, y: x*26 + y, [ord(c.upper()) - ord('A') + 1 for c in col])
 
 
-def get_sheet_info():
+def get_sheet_info(sheet):
     cols = sheet.col_values(2)
     return len(cols), int(cols[-1])
 
 
-def update_sheet():
+def update_sheet(sheet):
     files = get_file_names()
     try:
-        n_cols, run_nr = get_sheet_info()
+        n_cols, run_nr = get_sheet_info(sheet)
         if run_nr in files:
             t, n = get_file_info(files, run_nr)
             sheet.update_cell(n_cols, col2num('AG'), t)
@@ -58,9 +60,15 @@ def update_sheet():
 
 if __name__ == '__main__':
     start = time()
+    sheet = load_sheet()
+    reloads = 0
     while True:
-        update_sheet()
+        update_sheet(sheet)
         sleep(5)
         now = datetime.fromtimestamp(time() - start) - timedelta(hours=1)
         print '\rRunning for {}'.format(now.strftime('%H:%M:%S')),
         stdout.flush()
+        if (time() - start) / (55 * 60) > reloads:
+            print 'reloading sheet ...'
+            sheet = load_sheet()
+            reloads += 1
